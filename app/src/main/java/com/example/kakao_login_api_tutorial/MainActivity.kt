@@ -6,13 +6,28 @@ import android.os.Bundle
 import android.widget.Toast
 import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.auth.model.OAuthToken
-import com.kakao.sdk.common.model.AuthErrorCause.* //when문에 있는 AccessDenied와 같은 상수들을 사용하기 위해 import 해줘야하는 코드
+import com.kakao.sdk.common.model.AuthErrorCause.*
+import com.kakao.sdk.user.UserApiClient
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        //한 번 로그인시 sdk에서 토큰 소유 -> 로그아웃,회원탈퇴를 할 시 토큰 삭제 -> 토큰을 확인해 유효한 토큰이 존재하는지 확인한 뒤
+        // 토큰 존재시 로그인 상태이므로 SecondActivity로 넘겨주고, 토큰이 존재하지 않을시 MainActivity에 머무르게 하기.
+
+        UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
+            if (error != null) {
+                Toast.makeText(this, "토큰 정보 보기 실패", Toast.LENGTH_SHORT).show()
+            }
+            else if (tokenInfo != null) {
+                Toast.makeText(this, "토큰 정보 보기 성공", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, Activity2::class.java)
+                startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+            }
+        }//토큰 확인 코드
 
         val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
             if (error != null) {
@@ -41,17 +56,17 @@ class MainActivity : AppCompatActivity() {
                     error.toString() == Unauthorized.toString() -> {
                         Toast.makeText(this, "앱이 요청 권한이 없음", Toast.LENGTH_SHORT).show()
                     }
-                    else -> { //known
-                        Toast.makeText(this, "기타 에러", Toast.LENGTH_SHORT).show()
+                    else -> {
+                        Toast.makeText(this, "기타 에러", Toast.LENGTH_SHORT).show() //기타 오류
                     }
                 }
-            }
+            } //각종 로그인 오류 토스트 메시지 호출
 
                 else if (token != null) {
-                    Toast.makeText(this, "로그인에 성공하였습니다.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "로그인에 성공하였습니다.", Toast.LENGTH_SHORT).show() //로그인 성공시 activity2로 이동
                     val intent = Intent(this, Activity2::class.java)
-                    startActivity(intent)
-            }
+                    startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+            }//.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)) > 로그아웃,회원탈퇴를 할 시 이전 화면으로 이동
         }
 
         kakao_login_button.setOnClickListener {
@@ -62,4 +77,4 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-}//각종 실패 사유 토스트 메시지 및 로그인 성공 토스트 메시지 실행
+}
