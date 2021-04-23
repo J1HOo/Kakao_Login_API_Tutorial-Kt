@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">kakao_login_API_tutorial</string>
+    <string name="token">kakaoMyToken</string>
+    <string name="native_token">mytoken</string>
 </resources>

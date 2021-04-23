@@ -17,8 +17,8 @@ class Activity2 : AppCompatActivity() {
         UserApiClient.instance.me { user, error ->
             id.text = "회원번호: ${user?.id}"
             nickname.text = "닉네임: ${user?.kakaoAccount?.profile?.nickname}"
-            profileimage_url.text = "프로필 링크: ${user?.kakaoAccount?.profile?.profileImageUrl}"
-            thumbnailimage_url.text = "썸네일 링크: ${user?.kakaoAccount?.profile?.thumbnailImageUrl}"
+            profileimage_url.text = "프로필 링크: ${user?.kakaoAccount?.profile?.profileImageUrl.toString()}"
+            thumbnailimage_url.text = "썸네일 링크: ${user?.kakaoAccount?.profile?.thumbnailImageUrl.toString()}"
         } //activity2 textView에 프로필 정보를 받아와 들어가게 설정
 
 

@@ -7,6 +7,6 @@ class TestApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        KakaoSdk.init(this, "b7cd55d46647fcce4632bdf0630fe2e7")
+        KakaoSdk.init(this, "myToken")
     }
 } //Kakao SDK를 사용하기 위한 Native App Key로 초기화
